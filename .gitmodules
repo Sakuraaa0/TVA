@@ -1,0 +1,9 @@
+[submodule "thirdparty/FlameGraph"]
+	path = thirdparty/FlameGraph
+	url = git@github.com:brendangregg/FlameGraph.git
+[submodule "thirdparty/unordered_dense"]
+	path = thirdparty/unordered_dense
+	url = git@github.com:martinus/unordered_dense.git
+[submodule "thirdparty/gflags_stable"]
+	path = thirdparty/gflags_stable
+	url = https://github.com/gflags/gflags.git
