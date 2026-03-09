@@ -12,6 +12,7 @@
 #include "leveldb/port/port_stdcxx.h"
 #include "livegraph/allocator.hpp"
 #include "livegraph/futex.hpp"
+#include "persistence/PersistManager.hpp"
 
 namespace ctgraph
 {
@@ -28,6 +29,9 @@ namespace ctgraph
         // level file index
         livegraph::SparseArrayAllocator<void> array_allocator;
 
+        // 持久化管理器指针（可选）
+        persistence::PersistManager* persist_mgr_ = nullptr;
+
     public:
         CtStore(const size_t max_vertex_num) : max_vertex_num_(max_vertex_num), vertex_id_(0)
         {
@@ -40,19 +44,26 @@ namespace ctgraph
 
         ~CtStore() override {}
 
+        // 设置持久化管理器
+        void setPersistManager(persistence::PersistManager* mgr) { persist_mgr_ = mgr; }
+
         void put_edge(VertexId_t src, VertexId_t dst, EdgeProperty_t& s) override;
 
         /**
-         * For testing purposes only, accepts a timestamp to facilitate debugging.
-         * @param ts The timestamp passed in for testing.
+         * 仅测试使用传入时间戳方便debug
+         * @param ts 测试所传入的时间戳
          */
         void put_edge_withTs(VertexId_t src, VertexId_t dst, EdgeProperty_t& s, SequenceNumber_t ts);
 
         static uint64_t getCurrentTimeInMicroseconds()
         {
+            // 获取当前时间点
             const auto now = std::chrono::system_clock::now();
+            // 转换为自1970-01-01 00:00:00以来的时间
             const auto duration = now.time_since_epoch();
+            // 转换为微秒
             const auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
+            // 返回uint64_t类型的微秒数
             return static_cast<uint64_t>(microseconds);
         }
 
@@ -98,9 +109,9 @@ namespace ctgraph
         }
 
         /**
-         * Get all neighbors of a vertex
-         * @param vertex The vertex ID
-         * @param neighbors Vector to store the neighbors
+         * 获取顶点的所有邻居
+         * @param vertex 顶点ID
+         * @param neighbors 存储邻居的向量
          */
         void getNeighbors(VertexId_t vertex, std::vector<VertexId_t>& neighbors)
         {

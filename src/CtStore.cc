@@ -9,43 +9,41 @@ namespace ctgraph
     {
         SequenceNumber_t seq = 0;
         Marker_t marker = false;
-        // Edge edge(dst, seq, marker);
-        // if (hophashtables_.find(src) == hophashtables_.end()) {
-        //
-        //     hophashtables_[src] = new hophash::HopscotchHashTable();
-        // }
-        // hophashtables_[src]->insertWithTs(edge);
 
-        // This line atomically loads the `MemTable` pointer from the `memTable_` atomic variable
-        // with `memory_order_acquire` semantics, and assigns it to `old_mem`.
-        // `memory_order_acquire` ensures that all subsequent read and write operations in the current thread
-        // are not reordered before this load operation. This guarantees that after loading `old_mem`,
-        // the current thread can see all modifications made by other threads before storing `old_mem`.
         MemTable* mem = memTable_.load(std::memory_order_acquire);
         auto id = mem->GetMaxEdgeNum() - mem->remain_capacity_;
         mem->put_edge(src, dst, s, marker, seq, id);
         memTable_.store(mem, std::memory_order_release);
+
+        // 持久化
+        if (persist_mgr_ && persist_mgr_->isEnabled()) {
+            persist_mgr_->wal().logEdgeInsert(seq, src, dst, s.data() ? s.data() : "");
+#ifdef HAS_ROCKSDB
+            if (persist_mgr_->isFullMode()) {
+                persist_mgr_->rocksDBStore().putFriend(src, dst, seq, true);
+            }
+#endif
+        }
     }
 
     void CtStore::put_edge_withTs(VertexId_t src, VertexId_t dst, EdgeProperty_t& s, SequenceNumber_t ts)
     {
         Marker_t marker = false;
-        // Edge edge(dst, seq, marker);
-        // if (hophashtables_.find(src) == hophashtables_.end()) {
-        //
-        //     hophashtables_[src] = new hophash::HopscotchHashTable();
-        // }
-        // hophashtables_[src]->insertWithTs(edge);
 
-        // This line atomically loads the `MemTable` pointer from the `memTable_` atomic variable
-        // with `memory_order_acquire` semantics, and assigns it to `old_mem`.
-        // `memory_order_acquire` ensures that all subsequent read and write operations in the current thread
-        // are not reordered before this load operation. This guarantees that after loading `old_mem`,
-        // the current thread can see all modifications made by other threads before storing `old_mem`.
         MemTable* mem = memTable_.load(std::memory_order_acquire);
         auto id = mem->GetMaxEdgeNum() - mem->remain_capacity_;
         mem->put_edge(src, dst, s, marker, ts, id);
         memTable_.store(mem, std::memory_order_release);
+
+        // 持久化
+        if (persist_mgr_ && persist_mgr_->isEnabled()) {
+            persist_mgr_->wal().logEdgeInsert(ts, src, dst, s.data() ? s.data() : "");
+#ifdef HAS_ROCKSDB
+            if (persist_mgr_->isFullMode()) {
+                persist_mgr_->rocksDBStore().putFriend(src, dst, ts, true);
+            }
+#endif
+        }
     }
 
     Status CtStore::get_edge(VertexId_t src, VertexId_t dst, EdgeProperty_t*& property)
@@ -74,4 +72,4 @@ namespace ctgraph
         return rs;
     }
 
-} // namespace ctgraph
+}

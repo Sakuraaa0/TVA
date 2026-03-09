@@ -106,67 +106,7 @@ You need to specify optional arguments to generate corresponding temporal query 
 
 We use datasets from the [Network Repository](https://networkrepository.com/ca.php) and [Stanford SNAP](https://snap.stanford.edu/data/index.html).
 
-### Experiment on Temporal Graph
 
-For Figure 8(a), 8(b), 9(a), 9(b), 9(c), where `$num_op` indicates the number of graph operations. You can artificially modify the query statement to retrieve data from vertices with varying levels of popularity.:
-
-```
-  cd experiments
-  ./Mybench_experiment FLAGS_num_op
-```
-
-For Figure 8(c), 8(d), 9(d), 9(e), 9(f), by altering the original dataset used to generate the test statements, it is possible to conduct tests on LDBC datasets of varying sizes:
-
-```
-  cd experiments
-  ./LDBC_experiment
-```
-
-###  Experiment on Current Graph
-
-If you would like to understand the characteristics of each dataset, you can execute:
-
-```
- cd experiments
-  ./degree_count FLAGS_dataset
-```
-
-For Figure 10(a), 10(b), where `$dataset` indicates the currnet dataset:ca-IMDB-sf.el, com-dblp-sf.ungraph.el, com-youtube-sf.ungraph.el, and soc-Epinions1-sf.el:
-
-```
-  cd experiments
-  ./randomInsert_experiment FLAGS_dataset
-```
-
-For Figure 11(a), 11(b), 11(c), 11(d), where `$dataset` indicates the currnet dataset:ca-IMDB-sf.el, com-dblp-sf.ungraph.el, com-youtube-sf.ungraph.el, and soc-Epinions1-sf.el:
-
-```
- cd experiments
-  ./Graphalytics_experiment FLAGS_dataset
-```
-
-### Ablation Study on TVA
-
-For Figure 12(a), 12(b), You can adjust the value of `$version_num` to modify the number of different versions.
-
-```
- cd experiments
-  ./VersionChain_test
-```
-
-For Figure 12(c), You can adjust the value of `$version_num` to modify the number of different versions.
-
-```
- cd experiments
-  ./TemporalChain_test
-```
-
-For Figure 12(d),`$simd` can control whether we enable SIMD functionality:
-
-```
- cd experiments
-  ./TemporalChain_test FLAG_simd
-```
 
 ## Appendix
 
@@ -178,28 +118,35 @@ We mainly introduce the `src` and  `include`  folder, which contains the main co
 include
 ├── CMakeLists.txt
 ├── Column
-│   ├── ColumbTable.hpp
-│   ├── ColumnTypes.hpp
-│   └── TemporalData.hpp
+│   ├── ColumbTable.hpp
+│   ├── ColumnTypes.hpp
+│   └── TemporalData.hpp
 ├── CtGraph.hpp
 ├── CtStore.hpp
-├── MemTable.hpp
-├── Neighbors.hpp
-├── VersionChain.hpp
 ├── edge.hpp
 ├── flags.hpp
 ├── hopscotch
-│   ├── hopscotchhash.hpp
-│   └── id_types.hpp
+│   ├── hopscotchhash.hpp
+│   └── id_types.hpp
+├── MemTable.hpp
+├── Neighbors.hpp
+├── persistence
+│   ├── DiskStore.hpp
+│   ├── PersistConfig.hpp
+│   ├── PersistManager.hpp
+│   ├── RocksDBStore.hpp
+│   └── WAL.hpp
 ├── prefetch.hpp
-└── types.hpp
+├── types.hpp
+└── VersionChain.hpp
 src
 ├── CMakeLists.txt
 ├── ColumbTable.cpp
 ├── CtGraph.cc
 ├── CtStore.cc
+├── flags.cc
 ├── MemTable.cc
-├── VersionChain.cpp
-└── flags.cc
+├── RocksDBStore.cc
+└── VersionChain.cpp
 ```
 
