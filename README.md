@@ -1,4 +1,4 @@
-# TVA
+# [VLDB'26]TVA: A Version-aware Temporal Graph Storage System for Real-time Analytics
 
 ## Description
 
@@ -13,7 +13,6 @@ Core innovations include:
 
 TVA achieves up to *9.9×* lower temporal query latency and *2.2×* smaller storage overhead compared to state-of-the-art engines, making it a leading choice for efficient, large-scale, and up-to-date temporal graph processing.
 
-For AE reviewers, please directly refer to [Evaluate the Artifact](#for-reviewers-evaluate-the-artifact).
 
 ## Getting Started
 
