@@ -1,4 +1,4 @@
-# [VLDB'26]TVA: A Version-aware Temporal Graph Storage System for Real-time Analytics
+# [VLDB'26] TVA: A Version-aware Temporal Graph Storage System for Real-time Analytics
 
 ## Description
 
